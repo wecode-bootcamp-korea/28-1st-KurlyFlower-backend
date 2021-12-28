@@ -13,7 +13,7 @@ class Product(models.Model):
     thumbnail_url  = models.URLField()
     category       = models.ForeignKey("Category", on_delete=models.CASCADE)
     subcategory    = models.ForeignKey("Subcategory", on_delete=models.CASCADE)
-    packaging_type = models.ManyToManyField("Packaging_Type")
+    packaging      = models.ManyToManyField("Packaging")
 
     class Meta:
         db_table = "products"
@@ -38,8 +38,8 @@ class Image(models.Model):
     class Meta:
         db_table = "images"
 
-class Packaging_Type(models.Model):
+class Packaging(models.Model):
     name = models.CharField(max_length=50)
 
     class Meta:
-        db_table = "packaging_types"
+        db_table = "packagings"
