@@ -15,8 +15,9 @@ class Product(models.Model):
     subcategory    = models.ForeignKey("Subcategory", on_delete=models.CASCADE)
     packaging      = models.ManyToManyField("Packaging")
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.name
+
     class Meta:
         db_table = "products"
 
