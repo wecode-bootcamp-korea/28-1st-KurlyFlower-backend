@@ -7,7 +7,7 @@ class Product(models.Model):
     description    = models.CharField(max_length=500)
     price          = models.DecimalField(max_digits=10, decimal_places=2)
     units          = models.CharField(max_length=20)
-    weights        = models.DecimalField(max_digits=10, decimal_places=1)
+    weights        = models.CharField(max_length=20)
     shipping_type  = models.CharField(max_length=30, default="샛별배송")
     origin         = models.CharField(max_length=200)
     thumbnail_url  = models.URLField()
@@ -15,6 +15,8 @@ class Product(models.Model):
     subcategory    = models.ForeignKey("Subcategory", on_delete=models.CASCADE)
     packaging      = models.ManyToManyField("Packaging")
 
+    def __str__(self) -> str:
+        return self.name
     class Meta:
         db_table = "products"
 
