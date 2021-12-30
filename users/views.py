@@ -20,7 +20,7 @@ class LoginView(View):
             username = data["username"]
             password = data["password"].encode('utf-8')
 
-            user = User.objects.filter(username=username)
+            user = User.objects.filter(username=username).first()
 
             if not bcrypt.checkpw(password, user.password.encode('utf-8')):
                 raise ValidationError
