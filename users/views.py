@@ -55,7 +55,7 @@ class SignupView(View):
             return JsonResponse({'message' : 'CREATED'}, status = 201)
 
         except json.JSONDecodeError:
-            return JsonResponse({"MESSAGE": "JSONDecodeError"}, status = 404)
+            return JsonResponse({'message': 'JSONDECODE_ERROR'}, status = 404)
 
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
