@@ -18,20 +18,20 @@ class LoginView(View):
             data = json.loads(request.body)
 
             username = data["username"]
-            password = data["password"].encode('utf-8')
+            password = data["password"].encode("utf-8")
 
-            user = User.objects.filter(username=username).first()
+            user = User.objects.get(username=username)
 
-            if not bcrypt.checkpw(password, user.password.encode('utf-8')):
+            if not bcrypt.checkpw(password, user.password.encode("utf-8")):
                 raise ValidationError
 
             payload = {
-                "id":user.id,
-                "exp":datetime.now()+timedelta(hours=3),
-                "iat":datetime.now()
+                "id"  : user.id,
+                "exp" : datetime.now()+timedelta(hours=3),
+                "iat" : datetime.now()
             }
             access_token = jwt.encode(payload, SECRET_KEY, ALGORITHM)
-            return JsonResponse({"access_token":access_token}, status=200)
+            return JsonResponse({"access_token": access_token}, status=200)
 
         except JSONDecodeError:
             return JsonResponse({"message":"INVALID_JSON"}, status=400)
