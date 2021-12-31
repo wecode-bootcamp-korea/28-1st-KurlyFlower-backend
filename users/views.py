@@ -28,14 +28,14 @@ def validate_email(email):
 
 class SignupView(View):
     def post(self,request):
-
+        
         try:
             data = json.loads(request.body)
 
-            if User.objects.filter(username = data['username']):
+            if User.objects.filter(username = data['username']).exists():
                 return JsonResponse({'message' : 'USERNAME_DUPLICATE_VALUES'}, status = 400)
 
-            if User.objects.filter(email = data['email']):
+            if User.objects.filter(email = data['email']).exists():
                 return JsonResponse({'message' : 'EMAIL_DUPLICATE_VALUES'}, status = 400)
 
             validate_username(data['username'])
@@ -55,7 +55,7 @@ class SignupView(View):
             return JsonResponse({'message' : 'CREATED'}, status = 201)
 
         except json.JSONDecodeError:
-            return JsonResponse({'message': 'JSONDECODE_ERROR'}, status = 404)
+            return JsonResponse({'message': 'JSONDECODE_ERROR'}, status = 400)
 
         except KeyError:
             return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
