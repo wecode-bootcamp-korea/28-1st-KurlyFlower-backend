@@ -21,6 +21,9 @@ class CategoryView(View):
 
 class ProductListView(View):
     def get(self, request):
+        offset = request.GET.get('offset')
+        limit  = request.GET.get('limit')
+
         query = Product.objects.order_by("id")
 
         category_id    = request.GET.get("category_id")
@@ -34,7 +37,10 @@ class ProductListView(View):
             subcategory_id = int(subcategory_id)
             query = query.filter(category_id=category_id, subcategory_id=subcategory_id)
 
-        products = query[:20]
+        if offset and limit:
+            products = query[int(offset):int(limit)]
+        else:
+            products = query[:20]
 
         result = [
             {
@@ -70,10 +76,7 @@ class CollectionView(View):
         else:
             query = Product.objects.order_by("-price","id")
 
-        title    = COLLECTION_CODE.get(collection_id)[0]
-        subtitle = COLLECTION_CODE.get(collection_id)[1]
-
-        products = query[offset:limit].values(
+        query = query.values(
             "id",
             "category_id",
             "subcategory_id",
@@ -84,8 +87,17 @@ class CollectionView(View):
             "sales_quantity"
         )
 
+        title    = COLLECTION_CODE.get(collection_id)[0]
+        subtitle = COLLECTION_CODE.get(collection_id)[1]
+
+        if offset and limit:
+            products = query[int(offset):int(limit)]
+        else:
+            products = query[:20]
+
         result = {
             "collection_id": collection_id,
+            "total"        : products.count(),
             "title"        : title,
             "subtitle"     : subtitle,
             "products"     : [product for product in products]
