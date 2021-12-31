@@ -49,3 +49,43 @@ class ProductListView(View):
             for product in products
         ]
         return JsonResponse({"result": result}, status=200)
+
+class CollectionView(View):
+    def get(self, request, collection_id):
+        COLLECTION_CODE = {
+            1: ("놓칠 수 없는 최저가", "최저가 할인만 모음"),
+            2: ("인기 신상품 랭킹", "가장 먼저 만나보는 인기 신상품"),
+            3: ("지금 가장 핫한 상품", "재구매율 높은 상품"),
+            4: ("프리미엄 상품 대전", "컬리플라워가 추천하는 프리미엄 상품"),
+        }
+        if collection_id == 1:
+            query = Product.objects.order_by("price","id")
+        elif collection_id == 2:
+            query = Product.objects.order_by("-created_at","id")
+        elif collection_id == 3:
+            query = Product.objects.order_by("-sales_quantity","id")
+        else:
+            query = Product.objects.order_by("-price","id")
+
+        title    = COLLECTION_CODE.get(collection_id)[0]
+        subtitle = COLLECTION_CODE.get(collection_id)[1]
+
+        products = query[:20].values(
+            "id",
+            "category_id",
+            "subcategory_id",
+            "name",
+            "description",
+            "price",
+            "thumbnail_url",
+            "sales_quantity"
+        )
+
+        result = {
+            "collection_id": collection_id,
+            "title"        : title,
+            "subtitle"     : subtitle,
+            "products"     : [product for product in products]
+        }
+
+        return JsonResponse({"result": result}, status=200)
