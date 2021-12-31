@@ -52,6 +52,9 @@ class ProductListView(View):
 
 class CollectionView(View):
     def get(self, request, collection_id):
+        offset = request.GET.get('offset')
+        limit  = request.GET.get('limit')
+
         COLLECTION_CODE = {
             1: ("놓칠 수 없는 최저가", "최저가 할인만 모음"),
             2: ("인기 신상품 랭킹", "가장 먼저 만나보는 인기 신상품"),
@@ -70,7 +73,7 @@ class CollectionView(View):
         title    = COLLECTION_CODE.get(collection_id)[0]
         subtitle = COLLECTION_CODE.get(collection_id)[1]
 
-        products = query[:20].values(
+        products = query[offset:limit].values(
             "id",
             "category_id",
             "subcategory_id",
