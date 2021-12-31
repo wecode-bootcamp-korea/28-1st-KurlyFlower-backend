@@ -14,6 +14,9 @@ class Product(models.Model):
     category       = models.ForeignKey("Category", on_delete=models.CASCADE)
     subcategory    = models.ForeignKey("Subcategory", on_delete=models.CASCADE)
     packaging      = models.ManyToManyField("Packaging")
+    sales_quantity = models.IntegerField()
+    created_at     = models.DateTimeField(auto_now_add=True)
+    updated_at     = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
