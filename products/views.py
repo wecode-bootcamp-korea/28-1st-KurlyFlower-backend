@@ -1,5 +1,5 @@
-from django.http.response import JsonResponse
-from django.views import View
+from django.http.response   import HttpResponseNotFound, JsonResponse
+from django.views           import View
 
 from products.models import Category, Product
 
@@ -21,9 +21,6 @@ class CategoryView(View):
 
 class ProductListView(View):
     def get(self, request):
-        offset = request.GET.get('offset')
-        limit  = request.GET.get('limit')
-
         query = Product.objects.order_by("id")
 
         category_id    = request.GET.get("category_id")
@@ -36,6 +33,9 @@ class ProductListView(View):
             category_id = int(category_id)
             subcategory_id = int(subcategory_id)
             query = query.filter(category_id=category_id, subcategory_id=subcategory_id)
+
+        offset = request.GET.get("offset")
+        limit  = request.GET.get("limit")
 
         if offset and limit:
             products = query[int(offset):int(limit)]
@@ -58,9 +58,6 @@ class ProductListView(View):
 
 class CollectionView(View):
     def get(self, request, collection_id):
-        offset = request.GET.get('offset')
-        limit  = request.GET.get('limit')
-
         COLLECTION_CODE = {
             1: ("놓칠 수 없는 최저가", "최저가 할인만 모음"),
             2: ("인기 신상품 랭킹", "가장 먼저 만나보는 인기 신상품"),
@@ -73,8 +70,10 @@ class CollectionView(View):
             query = Product.objects.order_by("-created_at","id")
         elif collection_id == 3:
             query = Product.objects.order_by("-sales_quantity","id")
-        else:
+        elif collection_id == 4:
             query = Product.objects.order_by("-price","id")
+        else:
+            return HttpResponseNotFound()
 
         query = query.values(
             "id",
@@ -89,6 +88,9 @@ class CollectionView(View):
 
         title    = COLLECTION_CODE.get(collection_id)[0]
         subtitle = COLLECTION_CODE.get(collection_id)[1]
+
+        offset = request.GET.get("offset")
+        limit  = request.GET.get("limit")
 
         if offset and limit:
             products = query[int(offset):int(limit)]
