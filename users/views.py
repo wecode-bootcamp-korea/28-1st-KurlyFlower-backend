@@ -4,12 +4,12 @@ import bcrypt
 import jwt
 
 from django.core.exceptions import ValidationError
-from django.http    import JsonResponse
-from django.views   import View
-from users.models   import User
-from json.decoder   import JSONDecodeError
-from datetime       import datetime, timedelta
-from my_settings    import SECRET_KEY, ALGORITHM
+from django.http            import JsonResponse
+from django.views           import View
+from users.models           import User
+from json.decoder           import JSONDecodeError
+from datetime               import datetime, timedelta
+from my_settings            import SECRET_KEY, ALGORITHM
 
 def validate_username(username):
     REGEX_USERNAME = '^(?=.*[a-zA-Z])[a-zA-Z0-9]{6,}$'
