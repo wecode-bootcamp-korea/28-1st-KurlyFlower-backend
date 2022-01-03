@@ -6,17 +6,14 @@ from products.models import Category, Product
 class CategoryView(View):
     def get(self, request):
         categories = Category.objects.all()
-
-        result = []
-        for category in categories:
-            subcategories = category.subcategory_set.filter(category_id=category.id).values()
-            result.append(
-                {
-                    "id"           : category.id,
-                    "name"         : category.name,
-                    "subcategories": [sub for sub in subcategories]
-                }
-            )
+        result = [
+            {
+                "id"           : category.id,
+                "name"         : category.name,
+                "subcategories": [sub for sub in category.subcategory_set.values()]
+            }
+            for category in categories
+        ]
         return JsonResponse({"result":result}, status=200)
 
 class ProductListView(View):
