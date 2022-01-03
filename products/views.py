@@ -42,7 +42,7 @@ class ProductListView(View):
                     "subcategory_id": product.subcategory_id,
                     "name"          : product.name,
                     "description"   : product.description,
-                    "price"         : product.price,
+                    "price"         : int(product.price),
                     "thumbnail_url" : product.thumbnail_url
                 }
                 for product in products
@@ -66,23 +66,26 @@ class CollectionView(View):
         offset = request.GET.get("offset", 0)
         limit  = request.GET.get("limit", 20)
 
-        products = Product.objects.order_by(sorting)[int(offset):int(offset)+int(limit)].values(
-            "id",
-            "category_id",
-            "subcategory_id",
-            "name",
-            "description",
-            "price",
-            "thumbnail_url",
-            "sales_quantity"
-        )
+        products = Product.objects.order_by(sorting)[int(offset):int(offset)+int(limit)]
 
         result = {
             "collection_id": collection_id,
             "total"        : products.count(),
             "title"        : title,
             "subtitle"     : subtitle,
-            "products"     : [product for product in products]
+            "data"         : [
+                {
+                    "id"            : product.id,
+                    "category_id"   : product.category_id,
+                    "subcategory_id": product.subcategory_id,
+                    "name"          : product.name,
+                    "description"   : product.description,
+                    "price"         : int(product.price),
+                    "thumbnail_url" : product.thumbnail_url,
+                    "sales_quantity": product.sales_quantity
+                }
+                for product in products
+            ]
         }
 
         return JsonResponse({"result": result}, status=200)
