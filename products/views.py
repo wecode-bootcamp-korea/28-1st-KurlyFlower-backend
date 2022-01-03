@@ -1,5 +1,6 @@
 from django.http.response   import HttpResponseNotFound, JsonResponse
 from django.views           import View
+from django.db.models       import Q
 
 from products.models import Category, Product
 
@@ -18,39 +19,35 @@ class CategoryView(View):
 
 class ProductListView(View):
     def get(self, request):
-        query = Product.objects.order_by("id")
-
         category_id    = request.GET.get("category_id")
         subcategory_id = request.GET.get("subcategory_id")
+        offset         = request.GET.get("offset", 0)
+        limit          = request.GET.get("limit", 20)
+
+        q = Q()
 
         if category_id:
-            category_id = int(category_id)
-            query = query.filter(category_id=category_id)
-        if category_id and subcategory_id:
-            category_id = int(category_id)
-            subcategory_id = int(subcategory_id)
-            query = query.filter(category_id=category_id, subcategory_id=subcategory_id)
+            q &= Q(category_id=category_id)
+        if subcategory_id:
+            q &= Q(subcategory_id=subcategory_id)
 
-        offset = request.GET.get("offset")
-        limit  = request.GET.get("limit")
+        products = Product.objects.order_by('id').filter(q)[int(offset):int(offset)+int(limit)]
 
-        if offset and limit:
-            products = query[int(offset):int(limit)]
-        else:
-            products = query[:20]
-
-        result = [
-            {
-                "id"            : product.id,
-                "category_id"   : product.category_id,
-                "subcategory_id": product.subcategory_id,
-                "name"          : product.name,
-                "description"   : product.description,
-                "price"         : product.price,
-                "thumbnail_url" : product.thumbnail_url
-            }
-            for product in products
-        ]
+        result = {
+            "total": products.count(),
+            "data":[
+                {
+                    "id"            : product.id,
+                    "category_id"   : product.category_id,
+                    "subcategory_id": product.subcategory_id,
+                    "name"          : product.name,
+                    "description"   : product.description,
+                    "price"         : product.price,
+                    "thumbnail_url" : product.thumbnail_url
+                }
+                for product in products
+            ]
+        }
         return JsonResponse({"result": result}, status=200)
 
 class CollectionView(View):
