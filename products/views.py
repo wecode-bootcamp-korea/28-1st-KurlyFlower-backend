@@ -21,8 +21,17 @@ class ProductListView(View):
     def get(self, request):
         category_id    = request.GET.get("category_id")
         subcategory_id = request.GET.get("subcategory_id")
-        offset         = request.GET.get("offset", 0)
-        limit          = request.GET.get("limit", 20)
+        offset         = int(request.GET.get("offset", 0))
+        limit          = int(request.GET.get("limit", 20))
+        sorting        = request.GET.get("sort", "id")
+
+        sort = {
+            "낮은가격순":"price",
+            "신상품순":"-created_at",
+            "판매량순":"-sales_quantity",
+            "높은가격순":"-price",
+            "추천순": "-id"
+        }
 
         q = Q()
 
@@ -31,7 +40,7 @@ class ProductListView(View):
         if subcategory_id:
             q &= Q(subcategory_id=subcategory_id)
 
-        products = Product.objects.order_by('id').filter(q)[int(offset):int(offset)+int(limit)]
+        products = Product.objects.order_by(sort[sorting]).filter(q)[offset:offset+limit]
 
         result = {
             "total": products.count(),
@@ -43,7 +52,8 @@ class ProductListView(View):
                     "name"          : product.name,
                     "description"   : product.description,
                     "price"         : int(product.price),
-                    "thumbnail_url" : product.thumbnail_url
+                    "thumbnail_url" : product.thumbnail_url,
+                    "sales_quantity": product.sales_quantity
                 }
                 for product in products
             ]
@@ -52,21 +62,26 @@ class ProductListView(View):
 
 class CollectionView(View):
     def get(self, request, collection_id):
+        offset = int(request.GET.get("offset", 0))
+        limit  = int(request.GET.get("limit", 20))
+
         COLLECTION_CODE = {
-            1: ("놓칠 수 없는 최저가", "최저가 할인만 모음", "price"),
-            2: ("인기 신상품 랭킹", "가장 먼저 만나보는 인기 신상품", "-created_at"),
-            3: ("지금 가장 핫한 상품", "재구매율 높은 상품", "-sales_quantity"),
-            4: ("프리미엄 상품 대전", "컬리플라워가 추천하는 프리미엄 상품", "-price"),
+            1: ("놓칠 수 없는 최저가", "최저가 할인만 모음"),
+            2: ("인기 신상품 랭킹", "가장 먼저 만나보는 인기 신상품"),
+            3: ("지금 가장 핫한 상품", "재구매율 높은 상품"),
+            4: ("프리미엄 상품 대전", "컬리플라워가 추천하는 프리미엄 상품"),
+        }
+        sort = {
+            1: "price",
+            2: "-created_at",
+            3: "-sales_quantity",
+            4: "-price"
         }
 
         title    = COLLECTION_CODE.get(collection_id)[0]
         subtitle = COLLECTION_CODE.get(collection_id)[1]
-        sorting  = COLLECTION_CODE.get(collection_id)[2]
 
-        offset = request.GET.get("offset", 0)
-        limit  = request.GET.get("limit", 20)
-
-        products = Product.objects.order_by(sorting)[int(offset):int(offset)+int(limit)]
+        products = Product.objects.order_by(sort[collection_id])[offset:offset+limit]
 
         result = {
             "collection_id": collection_id,
