@@ -2,7 +2,7 @@ from django.http.response   import HttpResponseNotFound, JsonResponse
 from django.views           import View
 from django.db.models       import Q
 
-from products.models import Category, Product
+from products.models import Category, Product, Packaging
 
 class CategoryView(View):
     def get(self, request):
@@ -110,9 +110,8 @@ class ProductDetailView(View):
 
         try:
             product   = Product.objects.get(id=product_id)
-            packaging = product.packaging.get(product=product_id)
             images    = product.image_set.all()
-            
+
             data = {
                 "name"          : product.name,
                 "description"   : product.description,
@@ -121,11 +120,11 @@ class ProductDetailView(View):
                 "weights"       : product.weights,
                 "shipping_type" : product.shipping_type,
                 "origin"        : product.origin,
-                "packaging"     : packaging.name,
+                "packaging"     : product.packaging.first().name,
                 "detail_images" : [image.url for image in images],
                 "thumbnail_url" : product.thumbnail_url
             }
-            return JsonResponse({"product_detail":data}, status = 201)
+            return JsonResponse({"product_detail":data}, status = 200)
 
         except Product.DoesNotExist:
             return JsonResponse({"message":"Product_DoesNotExist"}, status=404)
