@@ -31,7 +31,6 @@ def validate_email(email):
 
 class SignupView(View):
     def post(self,request):
-        
         try:
             data = json.loads(request.body)
 

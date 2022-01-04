@@ -12,6 +12,7 @@ def login_required(func):
             payload      = jwt.decode(access_token, SECRET_KEY, algorithms=ALGORITHM)
             user         = User.objects.get(id=payload["id"])
             request.user = user
+
             return func(self, request, *args, **kwargs)
 
         except KeyError:
