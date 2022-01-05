@@ -1,8 +1,12 @@
+import json
+
 from django.http.response   import JsonResponse
 from django.views           import View
 from django.db.models       import Q
 
-from products.models import Category, Product, Packaging
+from products.models  import Category, Product, Packaging
+from users.models     import Cart
+from users.decorators import login_required
 
 class CategoryView(View):
     def get(self, request):
@@ -134,3 +138,31 @@ class ProductDetailView(View):
 
         except Product.DoesNotExist:
             return JsonResponse({"message":"Product_DoesNotExist"}, status=404)
+
+class CartView(View):
+    @login_required
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+
+            product_id = data["product_id"]
+            quantity   = data["quantity"]
+            user       = request.user
+
+            product = Product.objects.get(id=product_id)
+
+            cart, is_created = Cart.objects.get_or_create(
+                user = user,
+                product = product,
+                defaults={'quantity': 1}
+            )
+
+            if not is_created:
+                cart.quantity += quantity
+                cart.save()
+                return JsonResponse({"message":"SUCCESS"}, status=200)
+
+            return JsonResponse({"message":"SUCCESS"}, status=201)
+
+        except Product.DoesNotExist:
+            return JsonResponse({"message":"PRODUCT_DOES_NOT_EXIST"}, status=400)
