@@ -2,7 +2,10 @@ from django.http.response   import JsonResponse
 from django.views           import View
 from django.db.models       import Q
 
-from products.models import Category, Product, Packaging
+from products.models import Category, Product
+from users.models   import  User, Cart
+from users.decorators    import login_required
+from django.utils.decorators import method_decorator
 
 class CategoryView(View):
     def get(self, request):
@@ -134,3 +137,26 @@ class ProductDetailView(View):
 
         except Product.DoesNotExist:
             return JsonResponse({"message":"Product_DoesNotExist"}, status=404)
+
+#@method_decorator(login_required, name="get")
+class CartView(View):
+    #Read, Delete
+    @login_required
+    def get(self, request):
+        try:
+            results = []
+            items = Cart.objects.filter(user_id=request.user.id)
+
+            for item in items:
+                results.append([{
+                    "name"          : item.product.name,
+                    "price"         : item.product.price,
+                    "quantity"      : item.quantity,
+                    "packaging"     : item.product.packaging.first().name,
+                    "address"       : request.user.address,
+                    "thumbnail_url" : item.product.thumbnail_url
+                }])
+            return JsonResponse({"Cart Read": results}, status = 200)
+        
+        except Cart.DoesNotExist:
+            return JsonResponse({"message":"Cart_DoesNotExist"}, status=404)
