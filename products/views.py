@@ -1,8 +1,9 @@
 import json
 
-from django.http.response   import JsonResponse
-from django.views           import View
-from django.db.models       import Q
+from django.http.response    import JsonResponse
+from django.views            import View
+from django.db.models        import Q
+from django.utils.decorators import method_decorator
 
 from products.models  import Category, Product, Packaging
 from users.models     import Cart
@@ -148,27 +149,80 @@ class CartView(View):
             product_id = data["product_id"]
             quantity   = data["quantity"]
 
+            if quantity < 0:
+                return JsonResponse({"message":"BAD_REQUEST"}, status=400)
+
             product = Product.objects.get(id=product_id)
 
-            cart, is_created = Cart.objects.get_or_create(
+            item, is_created = Cart.objects.get_or_create(
                 user     = request.user,
                 product  = product,
-                defaults = {"quantity": 1}
+                defaults = {"quantity": quantity}
             )
-
             if not is_created:
-                cart.quantity += quantity
-                cart.save()
-
-            if cart.quantity < 0:
-                cart.quantity = 0
-                cart.save()
+                item.quantity += quantity
+                item.save()
 
             result = {
-                "product_id": cart.product_id,
-                "quantity"  : cart.quantity
+                "product_id": item.product_id,
+                "quantity"  : item.quantity
             }
-            return JsonResponse({"cart": result}, status=201)
+
+            http_status_code = 201 if is_created else 200
+
+            return JsonResponse({"result": result}, status=http_status_code)
+
+        except Product.DoesNotExist:
+            return JsonResponse({"message":"PRODUCT_DOES_NOT_EXIST"}, status=400)
+
+    @login_required
+    def patch(self, request):
+        try:
+            data = json.loads(request.body)
+
+            product_id = data["product_id"]
+            quantity   = data["quantity"]
+
+            item = Cart.objects.get(product_id=product_id, user=request.user)
+
+            if item.quantity == 1 and quantity == -1:
+                return JsonResponse({"message": "NO_CHANGE"}, status=200)
+
+            item.quantity += quantity
+            item.save()
+
+            result = {
+                "product_id": item.product_id,
+                "quantity"  : item.quantity
+            }
+
+            return JsonResponse({"result": result}, status=200)
+
+        except Cart.DoesNotExist:
+            return JsonResponse({"message":"ITEM_DOES_NOT_EXIST"}, status=400)
+
+
+    @login_required
+    def delete(self, request):
+        try:
+            data = json.loads(request.body)
+            product_id_list = data["product_id_list"]
+
+            q = Q()
+
+            for product_id in product_id_list:
+                q |= Q(product_id=product_id, user=request.user)
+
+            cart_items = Cart.objects.filter(q)
+
+            result = [{
+                "deleted_id"      : item.product_id,
+                "deleted_quantity": item.quantity
+            } for item in cart_items]
+
+            cart_items.delete()
+
+            return JsonResponse({"result":result}, status=200)
 
         except Product.DoesNotExist:
             return JsonResponse({"message":"PRODUCT_DOES_NOT_EXIST"}, status=400)
