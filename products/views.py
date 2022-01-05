@@ -147,22 +147,28 @@ class CartView(View):
 
             product_id = data["product_id"]
             quantity   = data["quantity"]
-            user       = request.user
 
             product = Product.objects.get(id=product_id)
 
             cart, is_created = Cart.objects.get_or_create(
-                user = user,
-                product = product,
-                defaults={'quantity': 1}
+                user     = request.user,
+                product  = product,
+                defaults = {"quantity": 1}
             )
 
             if not is_created:
                 cart.quantity += quantity
                 cart.save()
-                return JsonResponse({"message":"SUCCESS"}, status=200)
 
-            return JsonResponse({"message":"SUCCESS"}, status=201)
+            if cart.quantity < 0:
+                cart.quantity = 0
+                cart.save()
+
+            result = {
+                "product_id": cart.product_id,
+                "quantity"  : cart.quantity
+            }
+            return JsonResponse({"cart": result}, status=201)
 
         except Product.DoesNotExist:
             return JsonResponse({"message":"PRODUCT_DOES_NOT_EXIST"}, status=400)
