@@ -142,6 +142,26 @@ class ProductDetailView(View):
             return JsonResponse({"message":"Product_DoesNotExist"}, status=404)
 
 class CartView(View):
+    @login_required
+    def get(self, request):
+        try:
+            results = []
+            items = Cart.objects.filter(user_id=request.user.id)
+
+            for item in items:
+                results.append([{
+                    "name"          : item.product.name,
+                    "price"         : item.product.price,
+                    "quantity"      : item.quantity,
+                    "packaging"     : item.product.packaging.first().name,
+                    "address"       : request.user.address,
+                    "thumbnail_url" : item.product.thumbnail_url
+                }])
+            return JsonResponse({"result": results}, status = 200)
+        
+        except Cart.DoesNotExist:
+            return JsonResponse({"message":"Cart_DoesNotExist"}, status=404)
+
     def post_input_validator(self, quantity):
         if quantity <= 0:
             raise ValidationError("INVALID_QUANTITY")
