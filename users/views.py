@@ -31,7 +31,7 @@ def validate_email(email):
 
 class SignupView(View):
     def post(self,request):
-        
+
         try:
             data = json.loads(request.body)
 
@@ -81,7 +81,7 @@ class LoginView(View):
 
             payload = {
                 "id"  : user.id,
-                "exp" : datetime.now()+timedelta(hours=3),
+                "exp" : datetime.now()+timedelta(days=7),
                 "iat" : datetime.now()
             }
             access_token = jwt.encode(payload, SECRET_KEY, ALGORITHM)
