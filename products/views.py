@@ -141,7 +141,6 @@ class ProductDetailView(View):
         except Product.DoesNotExist:
             return JsonResponse({"message":"Product_DoesNotExist"}, status=404)
 
-@method_decorator(login_required, name="dispatch")
 class CartView(View):
     def post_input_validator(self, quantity):
         if quantity <= 0:
@@ -152,6 +151,7 @@ class CartView(View):
         if quantity not in SIGNIFICANT_FIGURES:
             raise ValidationError("INVALID_QUANTITY")
 
+    @login_required
     def post(self, request):
         try:
             data = json.loads(request.body)
@@ -185,6 +185,7 @@ class CartView(View):
         except Product.DoesNotExist:
             return JsonResponse({"message":"PRODUCT_DOES_NOT_EXIST"}, status=400)
 
+    @login_required
     def patch(self, request):
         try:
             data = json.loads(request.body)
@@ -215,6 +216,7 @@ class CartView(View):
         except Cart.DoesNotExist:
             return JsonResponse({"message":"ITEM_DOES_NOT_EXIST"}, status=400)
 
+    @login_required
     def delete(self, request):
         try:
             data = json.loads(request.body)
