@@ -1,11 +1,12 @@
 import json
 
+from django.core.exceptions import ValidationError
 from django.http.response    import JsonResponse
 from django.views            import View
 from django.db.models        import Q
 from django.utils.decorators import method_decorator
 
-from products.models  import Category, Product, Packaging
+from products.models  import Category, Product
 from users.models     import Cart
 from users.decorators import login_required
 
@@ -140,8 +141,17 @@ class ProductDetailView(View):
         except Product.DoesNotExist:
             return JsonResponse({"message":"Product_DoesNotExist"}, status=404)
 
+@method_decorator(login_required, name="dispatch")
 class CartView(View):
-    @login_required
+    def post_input_validator(self, quantity):
+        if quantity <= 0:
+            raise ValidationError("INVALID_QUANTITY")
+
+    def patch_input_validator(self, quantity):
+        SIGNIFICANT_FIGURES = (-1, 1)
+        if quantity not in SIGNIFICANT_FIGURES:
+            raise ValidationError("INVALID_QUANTITY")
+
     def post(self, request):
         try:
             data = json.loads(request.body)
@@ -149,8 +159,7 @@ class CartView(View):
             product_id = data["product_id"]
             quantity   = data["quantity"]
 
-            if quantity < 0:
-                return JsonResponse({"message":"BAD_REQUEST"}, status=400)
+            self.post_input_validator(quantity)
 
             product = Product.objects.get(id=product_id)
 
@@ -159,7 +168,8 @@ class CartView(View):
                 product  = product,
                 defaults = {"quantity": quantity}
             )
-            if not is_created:
+
+            if not is_created: # 장바구니에 이미 상품이 담겨있는 경우
                 item.quantity += quantity
                 item.save()
 
@@ -175,13 +185,14 @@ class CartView(View):
         except Product.DoesNotExist:
             return JsonResponse({"message":"PRODUCT_DOES_NOT_EXIST"}, status=400)
 
-    @login_required
     def patch(self, request):
         try:
             data = json.loads(request.body)
 
             product_id = data["product_id"]
             quantity   = data["quantity"]
+
+            self.patch_input_validator(quantity)
 
             item = Cart.objects.get(product_id=product_id, user=request.user)
 
@@ -198,22 +209,18 @@ class CartView(View):
 
             return JsonResponse({"result": result}, status=200)
 
+        except ValidationError as e:
+            return JsonResponse({"message":e.message}, status=400)
+
         except Cart.DoesNotExist:
             return JsonResponse({"message":"ITEM_DOES_NOT_EXIST"}, status=400)
 
-
-    @login_required
     def delete(self, request):
         try:
             data = json.loads(request.body)
             product_id_list = data["product_id_list"]
 
-            q = Q()
-
-            for product_id in product_id_list:
-                q |= Q(product_id=product_id, user=request.user)
-
-            cart_items = Cart.objects.filter(q)
+            cart_items = Cart.objects.filter(product__id__in=product_id_list)
 
             result = [{
                 "deleted_id"      : item.product_id,

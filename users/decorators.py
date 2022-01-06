@@ -15,7 +15,7 @@ def login_required(func):
             return func(self, request, *args, **kwargs)
 
         except KeyError:
-            return JsonResponse({'message':'NO_TOKEN'}, status=400)
+            return JsonResponse({"message":"NO_TOKEN"}, status=400)
 
         except DecodeError:
             return JsonResponse({"message": "INVALID_TOKEN"}, status=400)
