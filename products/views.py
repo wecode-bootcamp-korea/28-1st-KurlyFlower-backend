@@ -1,4 +1,5 @@
 import json
+from json.decoder import JSONDecodeError
 
 from django.core.exceptions import ValidationError
 from django.http.response    import JsonResponse
@@ -145,20 +146,19 @@ class CartView(View):
     @login_required
     def get(self, request):
         try:
-            results = []
             items = Cart.objects.filter(user_id=request.user.id)
 
-            for item in items:
-                results.append([{
-                    "name"          : item.product.name,
-                    "price"         : item.product.price,
-                    "quantity"      : item.quantity,
-                    "packaging"     : item.product.packaging.first().name,
-                    "address"       : request.user.address,
-                    "thumbnail_url" : item.product.thumbnail_url
-                }])
+            results = [{
+                "name"          : item.product.name,
+                "price"         : item.product.price,
+                "quantity"      : item.quantity,
+                "packaging"     : item.product.packaging.first().name,
+                "address"       : request.user.address,
+                "thumbnail_url" : item.product.thumbnail_url
+            } for item in items]
+
             return JsonResponse({"result": results}, status = 200)
-        
+
         except Cart.DoesNotExist:
             return JsonResponse({"message":"Cart_DoesNotExist"}, status=404)
 
@@ -202,6 +202,9 @@ class CartView(View):
 
             return JsonResponse({"result": result}, status=http_status_code)
 
+        except JSONDecodeError:
+            return JsonResponse({"message":"INVALID_JSON"}, status=400)
+
         except Product.DoesNotExist:
             return JsonResponse({"message":"PRODUCT_DOES_NOT_EXIST"}, status=400)
 
@@ -230,6 +233,9 @@ class CartView(View):
 
             return JsonResponse({"result": result}, status=200)
 
+        except JSONDecodeError:
+            return JsonResponse({"message":"INVALID_JSON"}, status=400)
+
         except ValidationError as e:
             return JsonResponse({"message":e.message}, status=400)
 
@@ -252,6 +258,9 @@ class CartView(View):
             cart_items.delete()
 
             return JsonResponse({"result":result}, status=200)
+
+        except JSONDecodeError:
+            return JsonResponse({"message":"INVALID_JSON"}, status=400)
 
         except Product.DoesNotExist:
             return JsonResponse({"message":"PRODUCT_DOES_NOT_EXIST"}, status=400)
