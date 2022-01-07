@@ -77,7 +77,7 @@ class LoginView(View):
             user = User.objects.get(username=username)
 
             if not bcrypt.checkpw(password, user.password.encode("utf-8")):
-                raise ValidationError
+                raise ValidationError("INVALID_PASSWORD")
 
             payload = {
                 "id"  : user.id,
