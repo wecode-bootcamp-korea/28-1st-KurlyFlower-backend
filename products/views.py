@@ -149,6 +149,7 @@ class CartView(View):
             items = Cart.objects.filter(user_id=request.user.id)
 
             results = [{
+                "product_id"    : item.id,
                 "name"          : item.product.name,
                 "price"         : item.product.price,
                 "quantity"      : item.quantity,
