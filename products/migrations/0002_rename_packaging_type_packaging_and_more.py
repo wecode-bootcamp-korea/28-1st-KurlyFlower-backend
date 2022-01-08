@@ -6,25 +6,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('products', '0001_initial'),
+        ("products", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='Packaging_Type',
-            new_name='Packaging',
+            old_name="Packaging_Type",
+            new_name="Packaging",
         ),
         migrations.RemoveField(
-            model_name='product',
-            name='packaging_type',
+            model_name="product",
+            name="packaging_type",
         ),
         migrations.AddField(
-            model_name='product',
-            name='packaging',
-            field=models.ManyToManyField(to='products.Packaging'),
+            model_name="product",
+            name="packaging",
+            field=models.ManyToManyField(to="products.Packaging"),
         ),
         migrations.AlterModelTable(
-            name='packaging',
-            table='packagings',
+            name="packaging",
+            table="packagings",
         ),
     ]
