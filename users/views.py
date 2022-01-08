@@ -41,6 +41,9 @@ class SignupView(View):
             if User.objects.filter(email = data['email']).exists():
                 return JsonResponse({'message' : 'EMAIL_DUPLICATE_VALUES'}, status = 400)
 
+            if User.objects.filter(phone_number = data['phone_number']).exists():
+                return JsonResponse({'message' : 'DUPLICATED_PHONE_NUMBER'}, status = 400)
+
             validate_username(data['username'])
             validate_password(data['password'])
             validate_email(data['email'])
