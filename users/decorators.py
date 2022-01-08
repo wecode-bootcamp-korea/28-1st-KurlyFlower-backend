@@ -1,8 +1,8 @@
 import jwt
-from jwt.exceptions import DecodeError, ExpiredSignatureError
 from django.http import JsonResponse
+from jwt.exceptions import DecodeError, ExpiredSignatureError
 
-from my_settings import SECRET_KEY, ALGORITHM
+from my_settings import ALGORITHM, SECRET_KEY
 from users.models import User
 
 

@@ -1,3 +1,4 @@
 -r requirements.txt
 
 black==21.12b0 # beta version
+isort==5.10.1

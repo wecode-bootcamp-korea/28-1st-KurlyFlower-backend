@@ -1,7 +1,8 @@
+from pathlib import Path
+
 import pymysql
 
-from pathlib import Path
-from my_settings import DATABASES, SECRET_KEY, ALGORITHM
+from my_settings import ALGORITHM, DATABASES, SECRET_KEY
 
 pymysql.install_as_MySQLdb()
 

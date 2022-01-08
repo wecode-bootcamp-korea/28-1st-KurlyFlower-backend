@@ -1,15 +1,16 @@
 import json
 import re
+from datetime import datetime, timedelta
+from json.decoder import JSONDecodeError
+
 import bcrypt
 import jwt
-
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.views import View
+
+from my_settings import ALGORITHM, SECRET_KEY
 from users.models import User
-from json.decoder import JSONDecodeError
-from datetime import datetime, timedelta
-from my_settings import SECRET_KEY, ALGORITHM
 
 
 def validate_username(username):

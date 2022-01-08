@@ -1,11 +1,11 @@
 from django.urls import path
 
 from products.views import (
+    CartView,
     CategoryView,
     CollectionView,
-    ProductListView,
     ProductDetailView,
-    CartView,
+    ProductListView,
 )
 
 urlpatterns = [

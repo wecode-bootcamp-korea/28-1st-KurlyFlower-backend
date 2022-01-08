@@ -2,14 +2,14 @@ import json
 from json.decoder import JSONDecodeError
 
 from django.core.exceptions import ValidationError
-from django.http.response import JsonResponse
-from django.views import View
 from django.db.models import Q
+from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
+from django.views import View
 
 from products.models import Category, Product
-from users.models import Cart
 from users.decorators import login_required
+from users.models import Cart
 
 
 class CategoryView(View):
