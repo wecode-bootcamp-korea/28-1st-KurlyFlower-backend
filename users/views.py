@@ -14,21 +14,21 @@ from users.models import User
 
 
 def validate_username(username):
-    REGEX_USERNAME = "^(?=.*[a-zA-Z])[a-zA-Z0-9]{6,}$"
+    REGEX_USERNAME = r"^(?=.*[a-zA-Z])[a-zA-Z0-9]{6,}$"
 
     if not re.match(REGEX_USERNAME, username):
         raise ValidationError("USERNAME_VALIDATION")
 
 
 def validate_password(password):
-    REGEX_PASSWORD = "^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$"
+    REGEX_PASSWORD = r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$"
 
     if not re.match(REGEX_PASSWORD, password):
         raise ValidationError("PASSWORD_VALIDATION")
 
 
 def validate_email(email):
-    REGEX_EMAIL = "^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+    REGEX_EMAIL = r"^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
 
     if not re.match(REGEX_EMAIL, email):
         raise ValidationError("EMAIL_VALIDATION")

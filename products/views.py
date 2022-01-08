@@ -4,7 +4,6 @@ from json.decoder import JSONDecodeError
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.http.response import JsonResponse
-from django.utils.decorators import method_decorator
 from django.views import View
 
 from products.models import Category, Product
