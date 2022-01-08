@@ -1,0 +1,12 @@
+default_stages: [commit, push]
+repos:
+  - repo: https://github.com/psf/black
+    rev: 21.12b0
+    hooks:
+      - id: black
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+      - id: check-case-conflict # 대소문자 체크해서 커밋 안되도록
+      - id: trailing-whitespace # 모든 텍스트 파일 (ex) yml, json, README
+      - id: end-of-file-fixer # 파일 마지막 끝이 new line인지 체크
