@@ -39,59 +39,64 @@
 
 ### 이찬주
 
-- Mission 1 | 모델링
+> Mission 1 | 모델링
 
-  ManyToMany, OneToMany 관계를 유의하여 ERD를 작성. 확장성을 고려해 이미지 테이블을 따로 두고, 요구사항에 맞게 데이터 베이스 모델 설계.
+- ManyToMany, OneToMany 관계를 유의하여 ERD를 작성함.
+- 확장성을 고려해 이미지 테이블을 따로 두고, 요구사항에 맞게 데이터 베이스 모델 설계함.
 
-- Mission 2 | 로그인 기능
+> Mission 2 | 로그인 기능
 
-  password는 bcrypt를 이용해 유효 값을 확인하고, 로그인 성공시 secret key와 해시 알고리즘을 이용해 jwt 토큰을 발행. Decorator를 구현하여 각 엔드포인트에 적용.
+- password는 `bcrypt`를 이용해 유효 값을 확인하고, 로그인 성공시 secret key와 해시 알고리즘을 이용해 `jwt` 토큰을 발행.
+- Decorator를 구현하여 각 엔드포인트에 적용함.
 
-- Mission 3 | 메인페이지
+> Mission 3 | 메인페이지
 
-  데이터 중심의 api를 구성하고 페이지 스크롤시에 제한된 범위 안에 있는 객체만을 프론트엔드에 전달.
+- 데이터 중심의 api를 구성하고 offset, limit값을 주어 페이지 스크롤시에 제한된 범위 안에 있는 객체만을 프론트엔드에 전달함.
 
-- Mission 4 | 장바구니 (create, update, delete)
+> Mission 4 | 장바구니 (create, update, delete)
 
-  REST하게 엔드포인트를 구성하고 각 목적에 맞는 메소드를 활용해 자원을 관리. 장고 ORM을 활용해 적절한 쿼리 생성.
+- REST하게 엔드포인트를 구성하고 각 목적에 맞는 메소드를 활용해 자원을 관리. 장고 ORM을 활용해 적절한 쿼리 생성함.
 
-- Mission 5 | AWS 서버 배포
+> Mission 5 | AWS 서버 배포
 
-  aws EC2 인스턴스와 RDB 데이터베이스를 통해 배포. ssh를 통해서 원격서버에 접속하는 방법을 이해함. 데몬 프로그램으로 실행해 쉘을 꺼도 서버가 자동으로 실행되도록 함. nginx 웹서버를 앞 단에 띄워 보안성을 고려했고 리버스 프록시 기능을 이용해 8000포트를 숨김.
+- aws EC2 인스턴스와 RDB 데이터베이스를 통해 배포.
+- ssh를 통해서 원격서버에 접속하는 방법을 이해함.
+- 데몬 프로그램으로 실행해 쉘을 꺼도 서버가 자동으로 실행되도록 함.
+- nginx 웹서버를 앞 단에 띄워 보안성을 고려했고 리버스 프록시 기능을 이용해 8000포트를 숨김.
 
-  ![aws 네트워크 구성도](https://user-images.githubusercontent.com/50139787/148691845-8d6cb7be-4dd5-4328-a8ed-6e683c6ca2bd.jpg)
+![aws 네트워크 구성도](https://user-images.githubusercontent.com/50139787/148691845-8d6cb7be-4dd5-4328-a8ed-6e683c6ca2bd.jpg)
 
 <br>
 
 ### 장민욱
 
-- Mission 1 | 프로젝트 초기 세팅
+> Mission 1 | 프로젝트 초기 세팅
 
-  Django 프로젝트를 생성하고, 초기 개발 환경을 구성
-  .gitignore 파일을 생성하고, Git 버전 관리에서 제외할 파일(민감한 정보 등)을 지정하였다.
+- Django 프로젝트를 생성하고, 초기 개발 환경을 구성
+- `.gitignore` 파일을 생성하고, Git 버전 관리에서 제외할 파일(민감한 정보 등)을 지정하였다.
   Branch 를 생성하고, 기능별로 코드를 관리
   Github Repository 를 생성하고 로컬의 Git 과 연동
   <br>
 
-- Mission 2 | 회원 가입
+> Mission 2 | 회원 가입
 
-  re.match 모듈을 이용하여 사용자로 부터 입력받은 값을 처음부터 시작해서 작성한 정규식 패턴과 일치하는지 유효성 검사 진행(ID, PASSWORD, EMAIL)
-  ValidationError를 이용하여 서로 다른 유효성 검사에 맞게 에러메세지 반환
-  bcrypt 라이브러리 이용하여 패스워드 암호화
+- `re.match` 모듈을 이용하여 사용자로 부터 입력받은 값을 처음부터 시작해서 작성한 정규식 패턴과 일치하는지 유효성 검사 진행(ID, PASSWORD, EMAIL)
+- ValidationError를 이용하여 서로 다른 유효성 검사에 맞게 에러메세지 반환
+- bcrypt 라이브러리 이용하여 패스워드 암호화
   <br>
 
-- Mission 3 | 상세페이지
+> Mission 3 | 상세페이지
 
-  상세페이지에 맞는 데이터값을 ORM의 쿼리문을 이용(get,filter,first), 정참조와 역참조를 활용하여 연결된 데이터 조회
+- 상세페이지에 맞는 데이터값을 ORM의 쿼리문을 이용(get,filter,first), 정참조와 역참조를 활용하여 연결된 데이터 조회
   <br>
 
-- Mission 4 | 장바구니(READ)
+> Mission 4 | 장바구니(READ)
 
-  로그인한 회원의 장바구니 목록을 ORM의 쿼리문을 이용(get,filter,first), 정참조와 역참조를 활용하여 연결된 데이터 조회
+- 로그인한 회원의 장바구니 목록을 ORM의 쿼리문을 이용(get,filter,first), 정참조와 역참조를 활용하여 연결된 데이터 조회
 
 <br>
 
-# API document
+## API document
 
 - 백엔드에서 개발한 API는 프론트엔드와 커뮤니케이션을 위해 포스트맨으로 문서화하여 공유했습니다.
 - 프론트엔드는 각 엔드포인트와 키 값을 문서를 통해 확인할 수 있고 커뮤니케이션 비용을 절감할 수 있습니다.
