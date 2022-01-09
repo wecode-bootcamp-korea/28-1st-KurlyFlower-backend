@@ -1,10 +1,8 @@
 # kurlyflower 프로젝트
 
-### 마켓컬리 백엔드 클론코딩 프로젝트입니다.
-
-### 이커머스 사이트의 필수 기능들을 구현했습니다.
-
-### 개발된 API는 프론트엔드 서버와 연동되어 실제 운영중입니다.
+마켓컬리 백엔드 클론코딩 프로젝트입니다.
+이커머스 사이트의 필수 기능들을 구현했습니다.
+개발된 API는 프론트엔드 서버와 연동되어 실제 운영중입니다.
 
 <br>
 
@@ -33,9 +31,11 @@
 
 <br>
 
-# ERD
+## 💡 ERD
 
 ![kurlyflower수정-1](https://user-images.githubusercontent.com/50139787/148689923-f91f787f-4bc6-40f5-b580-4f21451ac12f.jpg)
+
+## 📝 구현 기능 명세
 
 ### 이찬주
 
@@ -59,12 +59,12 @@
 
 > Mission 5 | AWS 서버 배포
 
+<img src="https://user-images.githubusercontent.com/50139787/148691845-8d6cb7be-4dd5-4328-a8ed-6e683c6ca2bd.jpg" width=500 />
+
 - aws EC2 인스턴스와 RDB 데이터베이스를 통해 배포.
 - ssh를 통해서 원격서버에 접속하는 방법을 이해함.
 - 데몬 프로그램으로 실행해 쉘을 꺼도 서버가 자동으로 실행되도록 함.
 - nginx 웹서버를 앞 단에 띄워 보안성을 고려했고 리버스 프록시 기능을 이용해 8000포트를 숨김.
-
-![aws 네트워크 구성도](https://user-images.githubusercontent.com/50139787/148691845-8d6cb7be-4dd5-4328-a8ed-6e683c6ca2bd.jpg)
 
 <br>
 
