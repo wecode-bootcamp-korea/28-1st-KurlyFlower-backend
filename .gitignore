@@ -366,3 +366,5 @@ db_uploader.py
 
 *.csv
 resource
+.vscode/
+*.code-workspace
